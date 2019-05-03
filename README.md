@@ -51,6 +51,7 @@ of this parameter has the format `<VARIABLE_NAME>=<VALUE>`.
 |`VAULT_TOKEN`| Vault token to use for authentication. | required |
 |`SECRET_CONFIG`| Definition of which secrets/keys to extract and what environment variables to set them to. See below for more details. | required |
 |`DEBUG`| Set to `true` to output verbose details during execution | `false` |
+|`DISABLE_EXPORT_PREFIX` | Set to `true` to remove `export` prefix on output and remove quoting of value (Used for docker --env-file option) | `false` |
 
 ## Configuration
 This container is configured with the `SECRET_CONFIG` environment variable which is a JSON formatted set of settings that determine which secrets get extracted from Vault.

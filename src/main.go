@@ -21,9 +21,11 @@ type Specification struct {
     Vault_Token    string `required:"true"`
     Debug         string `default:"false"`
     Secret_Config  string `required:"true"`
+    Disable_Export_Prefix  string `default:"false"`
 }
 
 type SecretConfig struct {
+    Disable_Export_Prefix bool
     SecretItems []SecretItem
 }
 
@@ -75,6 +77,10 @@ func main() {
 
   // This holds all of the secret configuration maps
   secretConfig := SecretConfig{}
+
+  if spec.Disable_Export_Prefix == "true" {
+    secretConfig.Disable_Export_Prefix = true
+  }
 
   // Unmarshal the SECRET_CONFIG json
   var f interface{}
@@ -262,12 +268,20 @@ func GetSecret(secretItem *SecretItem) {
 
 func DisplaySecretEnvs(secretConfig *SecretConfig) {
   // Display Environment variable output
+  var prefix = "export "
+  if secretConfig.Disable_Export_Prefix {
+    prefix = ""
+  }
   for _, secretItem := range secretConfig.SecretItems {
     for _, secretMap := range secretItem.SecretMaps {
 
       // Prints the env variable line to stdout
       // Single quotes value and escapes single quotes in secret with '"'"'
-      fmt.Println("export "+secretMap.EnvVar+"='"+strings.Replace(secretMap.SecretValue, "'", "'\"'\"'", -1)+"'")
+      if secretConfig.Disable_Export_Prefix {
+        fmt.Println(prefix+secretMap.EnvVar+"="+secretMap.SecretValue)
+      } else {
+        fmt.Println(prefix+secretMap.EnvVar+"='"+strings.Replace(secretMap.SecretValue, "'", "'\"'\"'", -1)+"'")
+      }
     }
   }
 }
